@@ -23,6 +23,7 @@ class Bot:
 
     def broadcast_msg_sync(self, msg):
         """Thread-safe method to call broadcast_msg from another thread."""
+        print("broadcast message...")
         if self.loop:
             asyncio.run_coroutine_threadsafe(self.broadcast_msg(msg), self.loop)
 

@@ -17,17 +17,20 @@ class Market:
         threading.Thread(target=self.market_loop, daemon=True).start()
 
     def market_loop(self):
+        time.sleep(2) #Wait a lil so that the bot can start up
         while(True):
             print("!!!!UPDATING MARKET DATA!!!!")
             #self.fetch_prices()
             self.data['TSLA'] = {
-                "prices": [10, 20, 30]
+                "prices": [10, 20, 30],
+                "stats": {}
             }
             self.data['AMD'] = {
-                "prices": [20, 70, 100, 30, 5]
+                "prices": [20, 70, 100, 30, 5],
+                "stats": {}
             }
             self.calculate_data()
-            print(self.data+"\n")
+            print(str(self.data)+"\n")
             
             for ticker in self.watchlist:
                 if strategy_eval(ticker, self.data):
@@ -54,7 +57,8 @@ class Market:
             for i in range(1,len(dataset['prices'])):
                 avg_diff+=dataset['prices'][i]-dataset['prices'][i-1]
                 avg_price+=dataset['prices'][i]
-            avg/=len(dataset['prices'])
+            avg_diff/=len(dataset['prices'])
+            avg_price/=len(dataset['prices'])
             self.data[ticker]['stats']['avg_diff']=avg_diff
             self.data[ticker]['stats']['avg_price']=avg_price
             self.data[ticker]['stats']['price_diff']=dataset['prices'][len(dataset['prices'])-1]-dataset['prices'][max(0,len(dataset['prices'])-2)]
@@ -64,9 +68,11 @@ class Market:
     
     def start(self):
         #Load all tickers we are watching
-        with open('stocks.txt', 'r') as f:
-            for ticker in f.readlines():
-                self.watchlist.append(ticker.rstrip())
+        # with open('stocks.txt', 'r') as f:
+        #     for ticker in f.readlines():
+        #         self.watchlist.append(ticker.rstrip())
+        self.watchlist.append('TSLA')
+        self.watchlist.append('AMD')
 
         #Setup our structure
         for ticker in self.watchlist:
