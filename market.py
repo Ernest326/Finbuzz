@@ -3,16 +3,16 @@ import time
 import threading
 from strategy import strategy_eval
 
-class Market:
-    def __init__(self, bot, update_interval=60*20, window_size=10, per_diff=0.05):
+testing = False
 
+class Market:
+    def __init__(self, bot, update_interval=60*20, window_size=72):
         self.watchlist=[]
         self.data={}
 
         self.bot = bot
         self.update_interval=update_interval
         self.window_size = window_size
-        self.per_diff=per_diff
         self.start()
         threading.Thread(target=self.market_loop, daemon=True).start()
 
@@ -20,15 +20,17 @@ class Market:
         time.sleep(2) #Wait a lil so that the bot can start up
         while(True):
             print("!!!!UPDATING MARKET DATA!!!!")
-            #self.fetch_prices()
-            self.data['TSLA'] = {
-                "prices": [10, 20, 30],
-                "stats": {}
-            }
-            self.data['AMD'] = {
-                "prices": [20, 70, 100, 30, 5],
-                "stats": {}
-            }
+            if testing:
+                self.data['TSLA'] = {
+                    "prices": [10, 20, 30],
+                    "stats": {}
+                }
+                self.data['AMD'] = {
+                    "prices": [20, 70, 100, 30, 5],
+                    "stats": {}
+                }
+            else:
+                self.fetch_prices()
             self.calculate_data()
             print(str(self.data)+"\n")
             
@@ -64,19 +66,19 @@ class Market:
             self.data[ticker]['stats']['price_diff']=dataset['prices'][len(dataset['prices'])-1]-dataset['prices'][max(0,len(dataset['prices'])-2)]
             self.data[ticker]['stats']['current_price']=dataset['prices'][len(dataset['prices'])-1]
         
-
     
     def start(self):
         #Load all tickers we are watching
-        # with open('stocks.txt', 'r') as f:
-        #     for ticker in f.readlines():
-        #         self.watchlist.append(ticker.rstrip())
-        self.watchlist.append('TSLA')
-        self.watchlist.append('AMD')
-
-        #Setup our structure
-        for ticker in self.watchlist:
-            self.data[ticker] = {
-                "prices": [],
-                "stats": {}
-            }
+        if testing:
+            self.watchlist.append('TSLA')
+            self.watchlist.append('AMD')
+        else:
+            with open('stocks.txt', 'r') as f:
+                for ticker in f.readlines():
+                    self.watchlist.append(ticker.rstrip())
+                    #Setup our structure
+            for ticker in self.watchlist:
+                self.data[ticker] = {
+                    "prices": [],
+                    "stats": {}
+                }
