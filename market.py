@@ -2,6 +2,7 @@ import yfinance as yf
 import time
 import threading
 from strategy import strategy_eval
+import numpy as np
 
 testing = False
 
