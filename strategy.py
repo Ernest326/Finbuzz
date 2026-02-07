@@ -2,7 +2,7 @@
 last_price_diff = 0
 def strategy_eval(ticker, data):
 
-    if(len(data[ticker]['prices']<2)):
+    if(len(data[ticker]['prices'])<2):
         return False
 
     stats = data[ticker]['stats']
